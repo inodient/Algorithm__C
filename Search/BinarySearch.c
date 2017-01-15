@@ -24,26 +24,24 @@ ElementType BinarySearch( ElementType DataSet[], int Size, ElementType Target ){
 	
 	return 0;
 }
+//
+//void BubbleSort( ElementType DataSet[], int Length ){
+//	int i, j;
+//
+//	for( i=0; i<Length-1; i++ ){
+//		for( j=0; j<Length-(i+1); j++ ){
+//			if( DataSet[j] > DataSet[j+1] ){
+//				int Temp = DataSet[j];
+//				DataSet[j] = DataSet[j+1];
+//				DataSet[j+1] = Temp;
+//			}
+//		}
+//	}
+//}
 
-void BubbleSort( ElementType DataSet[], int Length ){
-	int i, j;
-	
-	for( i=0; i<Length-1; i++ ){
-		for( j=0; j<Length-(i+1); j++ ){
-			if( DataSet[j] > DataSet[j+1] ){
-				int Temp = DataSet[j];
-				DataSet[j] = DataSet[j+1];
-				DataSet[j+1] = Temp;
-			}
-		}
-	}
-}
-
-int test_main( void ){
+int Test_BinarySearch( void ){
 	int DataSet[] = {32,16,54,96,84,32,16,82,16,89,68,98,79,84,65,13,87,37,99,19,49,71};
 	int Length = sizeof DataSet / sizeof DataSet[0];
-	
-	BubbleSort( DataSet, Length );
 	
 	int i;
 	for( i=0; i<Length; i++ ){

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef int ElementType;
+typedef char* ElementType;
 
 typedef struct tagNode{
 	ElementType Data;

@@ -4,9 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include </Users/changhokang/git/Algorithm__C/Graph/AdjacencyListGraph.c>
+
+typedef Vertex* ElementType;
 
 typedef struct tagNode{
-	char* Data;
+	ElementType Data;
 	struct tagNode* NextNode;
 } Node;
 
@@ -19,7 +22,7 @@ typedef struct tagLinkedQueue{
 void LQ_CreateQueue( LinkedQueue** Queue );
 void LQ_DestroyQueue( LinkedQueue* _Queue );
 
-Node* LQ_CreateNode( char* NewData );
+Node* LQ_CreateNode( ElementType NewData );
 void LQ_DestroyNode( Node* _Node );
 
 void LQ_Enqueue( LinkedQueue* Queue, Node* NewNode );
