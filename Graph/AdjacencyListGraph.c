@@ -188,3 +188,9 @@ int Test_AdjacencyList( void ){
 
 	return 0;
 }
+
+int main( void ){
+	Test_AdjacencyList();
+
+	return 0;
+}
