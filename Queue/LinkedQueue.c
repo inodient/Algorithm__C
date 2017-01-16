@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "../Graph/AdjacencyListGraph.c"
 
-typedef char* ElementType;
+typedef Vertex* QueueElementType;
 
 typedef struct tagNode{
-	ElementType Data;
+	QueueElementType Data;
 	struct tagNode* Next;
 } Node;
 
@@ -19,7 +20,7 @@ typedef struct tagLinkedQueue{
 void LQ_CreateQueue( LinkedQueue** Queue );
 void LQ_DestroyQueue( LinkedQueue* _Queue );
 
-Node* LQ_CreateNode( ElementType NewData );
+Node* LQ_CreateNode( QueueElementType NewData );
 void LQ_DestroyNode( Node* _Node );
 
 void LQ_Enqueue( LinkedQueue* Queue, Node* NewNode );
@@ -47,7 +48,7 @@ void LQ_DestroyQueue( LinkedQueue* _Queue ){
 	free( _Queue );
 }
 
-Node* LQ_CreateNode( ElementType NewData ){
+Node* LQ_CreateNode( QueueElementType NewData ){
 	Node* NewNode = (Node*)malloc( sizeof(Node) );
 
 	NewNode->Data = NewData;
@@ -108,29 +109,29 @@ int LQ_GetSize( LinkedQueue* Queue ){
 
 
 
-int Test_LinkedQueue( void ){
-	Node* Dequeued;
-	LinkedQueue* Queue;
-
-	LQ_CreateQueue( &Queue );
-
-	LQ_Enqueue( Queue, LQ_CreateNode( "abc" ) );
-	LQ_Enqueue( Queue, LQ_CreateNode( "def" ) );
-	LQ_Enqueue( Queue, LQ_CreateNode( "efg" ) );
-	LQ_Enqueue( Queue, LQ_CreateNode( "hij" ) );
-
-	printf( "Queue Size : %d\n", LQ_GetSize(Queue) );
-
-	while( LQ_IsEmpty( Queue ) == 0 ){
-		Dequeued = LQ_Dequeue( Queue );
-		printf( "Dequeue : %s \n", Dequeued->Data );
-		LQ_DestroyNode( Dequeued );
-	}
-
-	LQ_DestroyQueue( Queue );
-
-	return 0;
-}
+// int Test_LinkedQueue( void ){
+// 	Node* Dequeued;
+// 	LinkedQueue* Queue;
+//
+// 	LQ_CreateQueue( &Queue );
+//
+// 	LQ_Enqueue( Queue, LQ_CreateNode( "abc" ) );
+// 	LQ_Enqueue( Queue, LQ_CreateNode( "def" ) );
+// 	LQ_Enqueue( Queue, LQ_CreateNode( "efg" ) );
+// 	LQ_Enqueue( Queue, LQ_CreateNode( "hij" ) );
+//
+// 	printf( "Queue Size : %d\n", LQ_GetSize(Queue) );
+//
+// 	while( LQ_IsEmpty( Queue ) == 0 ){
+// 		Dequeued = LQ_Dequeue( Queue );
+// 		printf( "Dequeue : %s \n", Dequeued->Data );
+// 		LQ_DestroyNode( Dequeued );
+// 	}
+//
+// 	LQ_DestroyQueue( Queue );
+//
+// 	return 0;
+// }
 
 //int main( void ){
 //	Test_LinkedQueue();

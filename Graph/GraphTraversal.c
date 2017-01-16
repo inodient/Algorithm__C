@@ -1,4 +1,4 @@
-#include "/Users/changhokang/git/Algorithm__C/Queue/LinkedQueue.h"
+#include "../Queue/LinkedQueue.c"
 
 void DFS( Vertex* V );
 void BFS( Vertex* V, LinkedQueue* Queue );
@@ -30,10 +30,10 @@ void BFS( Vertex* V, LinkedQueue* Queue ){
 	printf( "%d ", V->Data );
 	V->Visited = Visited;
 
-	LQ_Enqueue( &Queue, LQ_CreateNode( V ) );
+	LQ_Enqueue( Queue, LQ_CreateNode( V ) );
 
 	while( !LQ_IsEmpty( Queue ) ){
-		Node* Popped = LQ_Dequeue( &Queue );
+		Node* Popped = LQ_Dequeue( Queue );
 		V = Popped->Data;
 		E = V->AdjacencyList;
 
@@ -43,10 +43,17 @@ void BFS( Vertex* V, LinkedQueue* Queue ){
 			if( V != NULL && V->Visited == NotVisited ){
 				printf( "%d ", V->Data );
 				V->Visited = Visited;
-				LQ_Enqueue( &Queue, LQ_CreateNode( V ) );
+				LQ_Enqueue( Queue, LQ_CreateNode( V ) );
 			}
 
 			E = E->Next;
 		}
 	}
+}
+
+int main( void ){
+
+	printf( "GraphTraversalMaster\n" );
+
+	return 0;
 }
