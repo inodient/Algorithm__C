@@ -3,15 +3,16 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "../Graph/AdjacencyListGraph.c"
 
-typedef int ElementType;
+typedef Vertex* ListElementType;
 
 typedef struct tagNode{
-	ElementType Data;
+	ListElementType Data;
 	struct tagNode* NextNode;
 } Node;
 
-Node* SLL_CreateNode( ElementType NewData );
+Node* SLL_CreateNode( ListElementType NewData );
 void SLL_DestroyNode( Node* _Node );
 
 void SLL_AppendNode( Node** Head, Node* NewNode );

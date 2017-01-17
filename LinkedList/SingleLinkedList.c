@@ -1,6 +1,6 @@
 #include "SingleLinkedList.h"
 
-Node* SLL_CreateNode( ElementType NewData ){
+Node* SLL_CreateNode( ListElementType NewData ){
 	Node* NewNode = (Node*)malloc( sizeof( Node ) );
 
 	NewNode->Data = NewData;
@@ -83,8 +83,8 @@ void SLL_PrintList( Node* Head ){
 	int Count = 0;
 	Node* Current = Head;
 
-	while( Current != NULL ){
-		printf( "Data[%d] : %d\n", Count++, Current->Data );
-		Current = Current->NextNode;
-	}
+	// while( Current != NULL ){
+	// 	printf( "Data[%d] : %d\n", Count++, Current->Data );
+	// 	Current = Current->NextNode;
+	// }
 }
