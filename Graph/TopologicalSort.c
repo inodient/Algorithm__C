@@ -3,6 +3,9 @@
 void TopologicalSort( Vertex* V, Node** List );
 void TS_DFS( Vertex* V, Node** List );
 
+void TopologicalSort( Vertex* V, Node** List );
+void TS_DFS( Vertex* V, Node** List );
+
 
 
 
@@ -15,11 +18,10 @@ void TopologicalSort( Vertex* V, Node** List ){
 }
 
 void TS_DFS( Vertex* V, Node** List ){
-  Node* NewHead = NULL;
   Edge* E = NULL;
+  Node* NewHead = NULL;
 
   V->Visited = Visited;
-
   E = V->AdjacencyList;
 
   while( E != NULL ){
@@ -30,11 +32,12 @@ void TS_DFS( Vertex* V, Node** List ){
     E = E->Next;
   }
 
-  printf( "%c\n", V->Data );
+  printf( "Inserted Head Value : %c \n", V->Data );
 
   NewHead = SLL_CreateNode( V );
   SLL_InsertNewHead( List, NewHead );
 }
+
 
 
 
@@ -71,8 +74,8 @@ int Test_TopologicalSort( void ){
 
   AddEdge( C, CreateEdge( C, F, 0 ) );
 
-  AddEdge( D, CreateEdge( D, F, 0 ) );
   AddEdge( D, CreateEdge( D, G, 0 ) );
+  AddEdge( D, CreateEdge( D, F, 0 ) );
 
   AddEdge( E, CreateEdge( E, G, 0 ) );
 
@@ -93,5 +96,10 @@ int Test_TopologicalSort( void ){
 
   DestroyGraph( graph );
 
+  return 0;
+}
+
+int main( void ){
+  Test_TopologicalSort();
   return 0;
 }
