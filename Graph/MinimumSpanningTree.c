@@ -171,7 +171,7 @@ int main( void ){
   AddVertex( graph, I );
 
   AddEdge( A, CreateEdge( A, B, 35 ) );
-  AddEdge( A, CreateEdge( A, B, 247 ) );
+  AddEdge( A, CreateEdge( A, E, 247 ) );
 
   AddEdge( B, CreateEdge( B, A, 35 ) );
   AddEdge( B, CreateEdge( B, C, 126 ) );

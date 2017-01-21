@@ -3,9 +3,6 @@
 void TopologicalSort( Vertex* V, Node** List );
 void TS_DFS( Vertex* V, Node** List );
 
-void TopologicalSort( Vertex* V, Node** List );
-void TS_DFS( Vertex* V, Node** List );
-
 
 
 
