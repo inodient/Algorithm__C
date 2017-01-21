@@ -1,36 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "../Graph/AdjacencyListGraph.c"
-
-typedef Vertex* QueueElementType;
-
-typedef struct tagNode{
-	QueueElementType Data;
-	struct tagNode* Next;
-} Node;
-
-typedef struct tagLinkedQueue{
-	Node* Front;
-	Node* Rear;
-} LinkedQueue;
-
-
-
-
-void LQ_CreateQueue( LinkedQueue** Queue );
-void LQ_DestroyQueue( LinkedQueue* _Queue );
-
-Node* LQ_CreateNode( QueueElementType NewData );
-void LQ_DestroyNode( Node* _Node );
-
-void LQ_Enqueue( LinkedQueue* Queue, Node* NewNode );
-Node* LQ_Dequeue( LinkedQueue* Queue );
-
-int LQ_IsEmpty( LinkedQueue* Queue );
-int LQ_GetSize( LinkedQueue* Queue );
-
-
-
+#include "LinkedQueue.h"
 
 void LQ_CreateQueue( LinkedQueue** Queue ){
 	*Queue = (LinkedQueue*)malloc( sizeof(LinkedQueue) );
@@ -52,7 +20,7 @@ Node* LQ_CreateNode( QueueElementType NewData ){
 	Node* NewNode = (Node*)malloc( sizeof(Node) );
 
 	NewNode->Data = NewData;
-	NewNode->Next = NULL;
+	NewNode->NextNode = NULL;
 
 	return NewNode;
 }
@@ -67,11 +35,11 @@ void LQ_Enqueue( LinkedQueue* Queue, Node* NewNode ){
 	} else{
 		Node* CursorNode = Queue->Front;
 
-		while( CursorNode->Next != NULL ){
-			CursorNode = CursorNode->Next;
+		while( CursorNode->NextNode != NULL ){
+			CursorNode = CursorNode->NextNode;
 		}
 
-		CursorNode->Next = NewNode;
+		CursorNode->NextNode = NewNode;
 	}
 
 	Queue->Rear = NewNode;
@@ -84,7 +52,7 @@ Node* LQ_Dequeue( LinkedQueue* Queue ){
 		Queue->Front = NULL;
 		Queue->Rear = NULL;
 	} else{
-		Queue->Front = Queue->Front->Next;
+		Queue->Front = Queue->Front->NextNode;
 	}
 
 	return Dequeued;
@@ -99,7 +67,7 @@ int LQ_GetSize( LinkedQueue* Queue ){
 	Node* CursorNode = Queue->Front;
 
 	while( CursorNode != NULL ){
-		CursorNode = CursorNode->Next;
+		CursorNode = CursorNode->NextNode;
 		Count++;
 	}
 

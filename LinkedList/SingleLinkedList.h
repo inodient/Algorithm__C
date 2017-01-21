@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "../Graph/AdjacencyListGraph.c"
+#include "../Graph/AdjacencyListGraph.h"
 
 typedef Vertex* ListElementType;
 
