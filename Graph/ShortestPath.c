@@ -1,5 +1,5 @@
-#include "../Graph/AdjacencyListGraph.c"
-#include "../Queue/PriorityQueue.c"
+#include "../Graph/AdjacencyListGraph.h"
+#include "../Queue/PriorityQueue.h"
 
 #define MAX_WEIGHT 36267
 
@@ -9,78 +9,87 @@ void Dijkstra( Graph* G, Vertex* StartVertex, Graph* ShortestPath );
 
 
 void Dijkstra( Graph* G, Vertex* StartVertex, Graph* ShortestPath ){
-  int i=0;
+	// Declaration
+	int i=0;
 
-  PQNode StartNode = { 0, StartVertex };
-  PriorityQueue* PQ = PQ_Create( 10 );
+	Vertex* CurrentVertex = NULL;
+	Edge* CurrentEdge = NULL;
 
-  Vertex* CurrentVertex = NULL;
-  Edge* CurrentEdge = NULL;
+	Vertex** ShortestPathVertices = (Vertex**)malloc( sizeof(Vertex*) * G->VertexCount );
+	Vertex** Fringes = (Vertex**)malloc( sizeof(Vertex*) * G->VertexCount );
+	Vertex** Precedences = (Vertex**)malloc( sizeof(Vertex*) * G->VertexCount );
 
-  int* Weights = (int*)malloc( sizeof(int) * G->VertexCount );
+	int* Weights = (int*)malloc( sizeof(int) * G->VertexCount );
 
-  Vertex** ShortestPathVertices = (Vertex**)malloc( sizeof(Vertex*) * G->VertexCount );
-  Vertex** Fringes = (Vertex**)malloc( sizeof(Vertex*) * G->VertexCount );
-  Vertex** Precedences = (Vertex**)malloc( sizeof(Vertex*) * G->VertexCount );
+	PriorityQueue* PQ = PQ_Create( 10 );
 
-  CurrentVertex = G->Vertices;
-  while( CurrentVertex != NULL ){
-    Vertex* NewVertex = CreateVertex( CurrentVertex->Data );
-    AddVertex( ShortestPath, NewVertex );
+	// Initializing
+	CurrentVertex = G->Vertices;
+	while( CurrentVertex != NULL ){
+		Vertex* NewVertex = CreateVertex( CurrentVertex->Data );
+		AddVertex( ShortestPath, NewVertex );
 
-    Fringes[i] = NULL;
-    Precedences[i] = NULL;
-    ShortestPathVertices[i] = NewVertex;
-    Weights[i] = MAX_WEIGHT;
-    CurrentVertex = CurrentVertex->Next;
-    i++;
-  }
+		ShortestPathVertices[i] = NewVertex;
+		Fringes[i] = NULL;
+		Precedences[i] = NULL;
 
-  PQ_Enqueue( PQ, StartNode );
+		Weights[i] = MAX_WEIGHT;
 
-  Weights[StartVertex->Index] = 0;
+		CurrentVertex = CurrentVertex->Next;
+		i++;
+	}
 
-  while( !PQ_IsEmpty(PQ) ){
-    PQNode Popped;
+	Weights[StartVertex->Index] = 0;
 
-    PQ_Dequeue( PQ, &Popped );
-    CurrentVertex = (Vertex*)Popped.Data;
+	// Initial Queueing
+	PQNode StartNode = { 0, StartVertex };
+	PQ_Enqueue( PQ, StartNode );
 
-    Fringes[CurrentVertex->Index] = CurrentVertex;
 
-    CurrentEdge = CurrentVertex->AdjacencyList;
-    while( CurrentEdge != NULL ){
-      Vertex* TargetVertex = CurrentEdge->Target;
+	// Executing
+	while( !PQ_IsEmpty(PQ) ){
+		PQNode Dequeued;
+		PQ_Dequeue( PQ, &Dequeued );
 
-      if( Fringes[TargetVertex->Index] == NULL && Weights[CurrentVertex->Index] + CurrentEdge->Weight < Weights[TargetVertex->Index] ){
-        PQNode NewNode = { CurrentEdge->Weight, TargetVertex };
-        PQ_Enqueue( PQ, NewNode );
+		CurrentVertex = (Vertex*)Dequeued.Data;
 
-        Precedences[TargetVertex->Index] = CurrentEdge->From;
-        Weights[TargetVertex->Index] = Weights[CurrentVertex->Index] + CurrentEdge->Weight;
-      }
+		Fringes[CurrentVertex->Index] = CurrentVertex;
 
-      CurrentEdge = CurrentEdge->Next;
-    }
-  }
+		CurrentEdge = CurrentVertex->AdjacencyList;
+		while( CurrentEdge != NULL ){
+			Vertex* TargetVertex = CurrentEdge->Target;
 
-  for( i=0; i<G->VertexCount; i++ ){
-    int FromIndex, ToIndex;
+			if( Fringes[TargetVertex->Index] == NULL && Weights[CurrentVertex->Index] + CurrentEdge->Weight < Weights[TargetVertex->Index] ){
+				PQNode NewNode = { CurrentEdge->Weight, TargetVertex };
+				PQ_Enqueue( PQ, NewNode );
 
-    if( Precedences[i] == NULL ) continue;
+				Precedences[TargetVertex->Index] = CurrentEdge->From;
+				Weights[TargetVertex->Index] = Weights[CurrentVertex->Index] + CurrentEdge->Weight;
+			}
 
-    FromIndex = Precedences[i]->Index;
-    ToIndex = i;
+			CurrentEdge = CurrentEdge->Next;
+		}
+	}
 
-    AddEdge( ShortestPathVertices[FromIndex], CreateEdge(ShortestPathVertices[FromIndex], ShortestPathVertices[ToIndex], Weights[i]) );
-  }
+	// Connecting
+	for( i=0; i<G->VertexCount; i++ ){
+		int FromIndex, ToIndex;
 
-  free( Fringes );
-  free( Precedences );
-  free( ShortestPathVertices );
-  free( Weights );
+		if( Precedences[i] == NULL ) continue;
 
-  PQ_Destroy( PQ );
+		FromIndex = Precedences[i]->Index;
+		ToIndex = i;
+
+		AddEdge( ShortestPathVertices[FromIndex], CreateEdge( ShortestPathVertices[FromIndex], ShortestPathVertices[ToIndex], Weights[ToIndex] ) );
+	}
+
+	// Destroying
+	free( ShortestPathVertices );
+	free( Fringes );
+	free( Precedences );
+	free( Weights );
+
+	PQ_Destroy( PQ );
 }
 
 
@@ -129,14 +138,6 @@ int Test_ShortestPath( void ){
 
   AddEdge( G, CreateEdge( G, I, 106 ) );
 
-  // printf( "Prim's Algorithm...\n" );
-  // Prim( graph, B, PrimMST );
-  // PrintGraph( PrimMST );
-  //
-  // printf( "Kruskal's Algorithm...\n" );
-  // Kruskal( graph, KruskalMST );
-  // PrintGraph( KruskalMST );
-  //
   printf( "Dijstra's Algorithm...\n" );
   Dijkstra( graph, B, PrimMST );
   PrintGraph( PrimMST );

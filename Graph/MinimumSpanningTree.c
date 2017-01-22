@@ -1,6 +1,6 @@
-#include "../Graph/AdjacencyListGraph.c"
-#include "../Queue/PriorityQueue.c"
-#include "../Tree/DisjointSet.c"
+#include "../Graph/AdjacencyListGraph.h"
+#include "../Queue/PriorityQueue.h"
+#include "../Tree/DisjointSet.h"
 
 #define MAX_WEIGHT 36267
 
@@ -11,141 +11,148 @@ void Kruskal( Graph* G, Graph* MST );
 
 
 void Prim( Graph* G, Vertex* StartVertex, Graph* MST ){
-  int i=0;
+	// Declaration
+	int i=0;
 
-  PQNode StartNode = { 0, StartVertex };
-  PriorityQueue* PQ = PQ_Create( 10 );
+	Vertex* CurrentVertex = NULL;
+	Edge* CurrentEdge = NULL;
 
-  Vertex* CurrentVertex = NULL;
-  Edge* CurrentEdge = NULL;
+	Vertex** MSTVertices = (Vertex**)malloc( sizeof(Vertex*) * G->VertexCount );
+	Vertex** Fringes = (Vertex**)malloc( sizeof(Vertex*) * G->VertexCount );
+	Vertex** Precedences = (Vertex**)malloc( sizeof(Vertex*) * G->VertexCount );
 
-  int* Weights = (int*)malloc( sizeof(int) * G->VertexCount );
+	int* Weights = (int*)malloc( sizeof(int) * G->VertexCount );
 
-  Vertex** MSTVertices = (Vertex**)malloc( sizeof(Vertex*) * G->VertexCount );
-  Vertex** Fringes = (Vertex**)malloc( sizeof(Vertex*) * G->VertexCount );
-  Vertex** Precedences = (Vertex**)malloc( sizeof(Vertex*) * G->VertexCount );
+	PriorityQueue* PQ = PQ_Create( 10 );
 
-  CurrentVertex = G->Vertices;
-  while( CurrentVertex != NULL ){
-    Vertex* NewVertex = CreateVertex( CurrentVertex->Data );
-    AddVertex( MST, NewVertex );
+	// Initializing
+	CurrentVertex = G->Vertices;
+	while( CurrentVertex != NULL ){
+		Vertex* NewVertex = CreateVertex( CurrentVertex->Data );
+		AddVertex( MST, NewVertex );
 
-    Fringes[i] = NULL;
-    Precedences[i] = NULL;
-    MSTVertices[i] = NewVertex;
-    Weights[i] = MAX_WEIGHT;
-    CurrentVertex = CurrentVertex->Next;
-    i++;
-  }
+		MSTVertices[i] = NewVertex;
+		Fringes[i] = NULL;
+		Precedences[i] = NULL;
+		Weights[i] = MAX_WEIGHT;
 
-  PQ_Enqueue( PQ, StartNode );
+		CurrentVertex = CurrentVertex->Next;
+		i++;
+	}
 
-  Weights[StartVertex->Index] = 0;
+	// Initial Queueing
+	PQNode StartNode = { 0, StartVertex };
+	PQ_Enqueue( PQ, StartNode );
 
-  while( !PQ_IsEmpty( PQ ) ){
-    PQNode Dequeued;
+	// Executing
+	while( !PQ_IsEmpty(PQ) ){
+		PQNode Dequeued;
+		PQ_Dequeue( PQ, &Dequeued );
 
-    PQ_Dequeue( PQ, &Dequeued );
-    CurrentVertex = (Vertex*)Dequeued.Data;
-    Fringes[CurrentVertex->Index] = CurrentVertex;
+		CurrentVertex = (Vertex*)Dequeued.Data;
 
-    CurrentEdge = CurrentVertex->AdjacencyList;
-    while( CurrentEdge != NULL ){
-      Vertex* TargetVertex = CurrentEdge->Target;
+		Fringes[CurrentVertex->Index] = CurrentVertex;
 
-      if( Fringes[TargetVertex->Index] == NULL && CurrentEdge->Weight < Weights[TargetVertex->Index] ){
-        PQNode NewNode = { CurrentEdge->Weight, TargetVertex };
-        PQ_Enqueue( PQ, NewNode );
+		CurrentEdge = CurrentVertex->AdjacencyList;
+		while( CurrentEdge != NULL ){
+			Vertex* TargetVertex = CurrentEdge->Target;
 
-        Precedences[TargetVertex->Index] = CurrentEdge->From;
-        Weights[TargetVertex->Index] = CurrentEdge->Weight;
-      }
+			if( Fringes[TargetVertex->Index] == NULL && Weights[TargetVertex->Index] > CurrentEdge->Weight ){
+				PQNode NewNode = { CurrentEdge->Weight, TargetVertex };
+				PQ_Enqueue( PQ, NewNode );
 
-      CurrentEdge = CurrentEdge->Next;
-    }
-  }
+				Precedences[TargetVertex->Index] = CurrentEdge->From;
+				Weights[TargetVertex->Index] = CurrentEdge->Weight;
+			}
 
-  for( i=0; i<G->VertexCount; i++ ){
-    int FromIndex, ToIndex;
+			CurrentEdge  = CurrentEdge->Next;
+		}
+	}
 
-    if( Precedences[i] == NULL ) continue;
+	// Connecting
+	for( i=0; i<G->VertexCount; i++ ){
+		int FromIndex, ToIndex;
 
-    FromIndex = Precedences[i]->Index;
-    ToIndex = i;
+		if( Precedences[i] == NULL ) continue;
 
-    AddEdge( MSTVertices[FromIndex], CreateEdge( MSTVertices[FromIndex], MSTVertices[ToIndex], Weights[i] ) );
-    AddEdge( MSTVertices[ToIndex], CreateEdge( MSTVertices[ToIndex], MSTVertices[FromIndex], Weights[i] ) );
-  }
+		FromIndex = Precedences[i]->Index;
+		ToIndex = i;
 
-  free( Fringes );
-  free( Precedences );
-  free( MSTVertices );
-  free( Weights );
+		AddEdge( MSTVertices[FromIndex], CreateEdge( MSTVertices[FromIndex], MSTVertices[ToIndex], Weights[ToIndex] ) );
+		AddEdge( MSTVertices[ToIndex], CreateEdge( MSTVertices[ToIndex], MSTVertices[FromIndex], Weights[ToIndex] ) );
+	}
 
-  PQ_Destroy( PQ );
+	// Destroying
+	free( Fringes );
+	free( Precedences );
+	free( MSTVertices );
+	free( Weights );
+
+	PQ_Destroy( PQ );
 }
 
 void Kruskal( Graph* G, Graph* MST ){
-  int i=0;
-  Vertex* CurrentVertex = NULL;
-  Vertex** MSTVertices = (Vertex**)malloc( sizeof(Vertex*) * G->VertexCount );
+	// Declaration
+	int i=0;
 
-  DisjointSet** VertexSet = (DisjointSet**)malloc( sizeof(DisjointSet*) * G->VertexCount );
+	Vertex* CurrentVertex = NULL;
+	Edge* CurrentEdge = NULL;
 
-  PriorityQueue* PQ = PQ_Create( 10 );
+	Vertex** MSTVertices = (Vertex**)malloc( sizeof(Vertex*) * G->VertexCount );
+	DisjointSet** VertexSet = (DisjointSet**)malloc( sizeof(DisjointSet*) * G->VertexCount );
 
-  CurrentVertex = G->Vertices;
-  while( CurrentVertex != NULL ){
-    Edge* CurrentEdge;
+	PriorityQueue* PQ = PQ_Create( 10 );
 
-    VertexSet[i] = DS_MakeSet( CurrentVertex );
-    MSTVertices[i] = CreateVertex( CurrentVertex->Data );
-    AddVertex( MST, MSTVertices[i] );
+	// Initialize
+	CurrentVertex = G->Vertices;
+	while( CurrentVertex != NULL ){
+		MSTVertices[i] = CreateVertex( CurrentVertex->Data );
+		VertexSet[i] = DS_MakeSet( CurrentVertex );
+		AddVertex( MST, MSTVertices[i] );
 
-    CurrentEdge = CurrentVertex->AdjacencyList;
-    while( CurrentEdge != NULL ){
-      PQNode NewNode = { CurrentEdge->Weight, CurrentEdge };
-      PQ_Enqueue( PQ, NewNode );
+		CurrentEdge = CurrentVertex->AdjacencyList;
+		while( CurrentEdge != NULL ){
+			PQNode NewNode = { CurrentEdge->Weight, CurrentEdge };
+			PQ_Enqueue( PQ, NewNode );
 
-      CurrentEdge = CurrentEdge->Next;
-    }
+			CurrentEdge = CurrentEdge->Next;
+		}
 
-    CurrentVertex = CurrentVertex->Next;
-    i++;
-  }
+		CurrentVertex = CurrentVertex->Next;
+		i++;
+	}
 
-  while( !PQ_IsEmpty( PQ ) ){
-    Edge* CurrentEdge;
-    int FromIndex;
-    int ToIndex;
-    PQNode Dequeued;
+	// Executing
+	while( !PQ_IsEmpty(PQ) ){
+		int FromIndex, ToIndex;
 
-    PQ_Dequeue( PQ, &Dequeued );
-    CurrentEdge = (Edge*)Dequeued.Data;
+		PQNode Dequeued;
+		PQ_Dequeue( PQ, &Dequeued );
 
-    FromIndex = CurrentEdge->From->Index;
-    ToIndex = CurrentEdge->Target->Index;
+		CurrentEdge = (Edge*)Dequeued.Data;
 
-    if( DS_FindSet( VertexSet[FromIndex] ) != DS_FindSet( VertexSet[ToIndex] ) ){
-      AddEdge( MSTVertices[FromIndex], CreateEdge( MSTVertices[FromIndex], MSTVertices[ToIndex], CurrentEdge->Weight ) );
-      AddEdge( MSTVertices[ToIndex], CreateEdge( MSTVertices[FromIndex], MSTVertices[ToIndex], CurrentEdge->Weight ) );
+		FromIndex = CurrentEdge->From->Index;
+		ToIndex = CurrentEdge->Target->Index;
 
-      DS_UnionSet( VertexSet[FromIndex], VertexSet[ToIndex] );
-    }
-  }
+		if( DS_FindSet( VertexSet[FromIndex] ) != DS_FindSet( VertexSet[ToIndex] ) ){
+			AddEdge( MSTVertices[FromIndex], CreateEdge( MSTVertices[FromIndex], MSTVertices[ToIndex], CurrentEdge->Weight ) );
+			AddEdge( MSTVertices[ToIndex], CreateEdge( MSTVertices[ToIndex], MSTVertices[FromIndex], CurrentEdge->Weight ) );
 
-  for( i=0; i<G->VertexCount; i++ ){
-    DS_DestroySet( VertexSet[i] );
-  }
+			DS_UnionSet( VertexSet[FromIndex], VertexSet[ToIndex] );
+		}
+	}
 
-  free( VertexSet );
-  free( MSTVertices );
+	// Destroying
+	free( MSTVertices );
+	free( VertexSet );
+
+	PQ_Destroy( PQ );
 }
 
 
 
 
-int main( void ){
+int Test_MinimumSpanningTree( void ){
   Graph* graph = CreateGraph();
   Graph* PrimMST = CreateGraph();
   Graph* KruskalMST = CreateGraph();
@@ -217,3 +224,9 @@ int main( void ){
 
   return 0;
 }
+
+//int main( void ){
+//	Test_MinimumSpanningTree();
+//
+//	return 0;
+//}

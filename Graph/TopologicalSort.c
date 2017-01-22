@@ -3,39 +3,36 @@
 void TopologicalSort( Vertex* V, Node** List );
 void TS_DFS( Vertex* V, Node** List );
 
-void TopologicalSort( Vertex* V, Node** List );
-void TS_DFS( Vertex* V, Node** List );
-
 
 
 
 void TopologicalSort( Vertex* V, Node** List ){
-  while( V != NULL && V->Visited == NotVisited ){
-    TS_DFS( V, List );
+	while( V != NULL && V->Visited == NotVisited ){
+		TS_DFS( V, List );
 
-    V = V->Next;
-  }
+		V = V->Next;
+	}
 }
 
 void TS_DFS( Vertex* V, Node** List ){
-  Edge* E = NULL;
-  Node* NewHead = NULL;
+	Node* NewHead = NULL;
+	Edge* E = NULL;
 
-  V->Visited = Visited;
-  E = V->AdjacencyList;
+	V->Visited = Visited;
+	E = V->AdjacencyList;
 
-  while( E != NULL ){
-    if( E->Target != NULL && E->Target->Visited == NotVisited ){
-      TS_DFS( E->Target, List );
-    }
+	while( E != NULL ){
+		if( E->Target != NULL && E->Target->Visited == NotVisited ){
+			TS_DFS( E->Target, List );
+		}
 
-    E = E->Next;
-  }
+		E = E->Next;
+	}
 
-  printf( "Inserted Head Value : %c \n", V->Data );
+	printf( "Insert New Head : %c\n", V->Data );
 
-  NewHead = SLL_CreateNode( V );
-  SLL_InsertNewHead( List, NewHead );
+	NewHead = SLL_CreateNode( V );
+	SLL_InsertNewHead( List, NewHead );
 }
 
 
@@ -99,7 +96,7 @@ int Test_TopologicalSort( void ){
   return 0;
 }
 
-int main( void ){
-  Test_TopologicalSort();
-  return 0;
-}
+//int main( void ){
+//  Test_TopologicalSort();
+//  return 0;
+//}

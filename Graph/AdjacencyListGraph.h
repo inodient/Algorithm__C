@@ -38,7 +38,7 @@ typedef struct tagGraph{
 
 
 
-Graph* CreateGrpah();
+Graph* CreateGraph();
 void DestroyGraph( Graph* _G );
 
 Vertex* CreateVertex( ElementType NewData );
