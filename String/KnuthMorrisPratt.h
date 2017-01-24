@@ -8,7 +8,7 @@
 
 #define MAX_BUFFER 512
 
-int KnuthMorrisPratt( char** Text, int TextSize, int Start, char* Pattern, int PatternSize );
+int KnuthMorrisPratt( char* Text, int TextSize, int Start, char* Pattern, int PatternSize );
 
 void Preprocess( char* Pattern, int PatternSize, int* Border );
 

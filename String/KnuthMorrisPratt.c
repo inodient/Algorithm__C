@@ -1,7 +1,7 @@
 #include "KnuthMorrisPratt.h"
 
 void Preprocess( char* Pattern, int PatternSize, int* Border ){
-  int i=0; j=-1;
+  int i=0, j=-1;
 
   Border[0] = -1;
 
@@ -67,13 +67,13 @@ int Test_KnuthMorrisPratt( int argc, char** argv ){
 
   PatternSize = strlen( Pattern );
 
-  if( (fp = fopen( FilePaht, "r")) == NULL ){
+  if( (fp = fopen( FilePath, "r")) == NULL ){
     printf( "Cannot open file : %s\n", FilePath );
     return 1;
   }
 
   while( fgets(Text, MAX_BUFFER, fp) != NULL ){
-    int Position = KnuthMorristPratt( Text, strlen(Text), 0, Pattern, PatternSize );
+    int Position = KnuthMorrisPratt( Text, strlen(Text), 0, Pattern, PatternSize );
 
     Line++;
 
@@ -86,3 +86,12 @@ int Test_KnuthMorrisPratt( int argc, char** argv ){
 
   return 0;
 }
+
+
+
+
+//int main( int argc, char** argv ){
+//	Test_KnuthMorrisPratt( argc, argv );
+//
+//	return 0;
+//}

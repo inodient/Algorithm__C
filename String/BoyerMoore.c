@@ -21,7 +21,7 @@ int BoyerMoore( char* Text, int TextSize, int Start, char* Pattern, int PatternS
       Position = i;
       break;
     } else{
-      i += Max( GST[j+i], j-BCT[ Text[i+j] ]);
+      i += Max( GST[j+i], j-BCT[ Text[i+j] ] );
     }
   }
 
@@ -54,16 +54,21 @@ void BuildGST( char* Pattern, int PatternSize, int* Suffix, int* GST ){
       if( GST[j] == 0 ){
         GST[j] = j-i;
       }
+
+      j = Suffix[j];
     }
 
-    j = Suffix[j];
+    i--;
+    j--;
+
+    Suffix[i] = j;
   }
 
   j = Suffix[0];
 
   for( i=0; i<=PatternSize; i++ ){
     if( GST[i] == 0 ){
-      GST[i] == j;
+      GST[i] = j;
     }
 
     if( i == j ){
@@ -79,12 +84,12 @@ int Max( int A, int B ){
 
 
 
-int Test_BoyerMoore( int argc, char* argv ){
+int Test_BoyerMoore( int argc, char** argv ){
   char* FilePath;
   FILE* fp;
 
   char Text[MAX_BUFFER];
-  chaR* Pattern;
+  char* Pattern;
   int PatternSize = 0;
   int Line = 0;
 
@@ -109,11 +114,21 @@ int Test_BoyerMoore( int argc, char* argv ){
     Line++;
 
     if( Position >= 0 ){
-      prtinf( "line : %d, column : %d : %s", Line, Position + 1, Text );
+      printf( "line : %d, column : %d : %s", Line, Position + 1, Text );
     }
   }
 
   fclose( fp );
 
   return 0;
+}
+
+
+
+
+
+int main( int argc, char** argv ){
+	Test_BoyerMoore( argc, argv );
+
+	return 0;
 }
